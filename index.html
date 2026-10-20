@@ -1380,8 +1380,6 @@ $('logoutBtn').onclick=async()=>{await supabase.auth.signOut();clearInterval(ref
 $('loginForm').onsubmit=async e=>{e.preventDefault();if(!CONFIGURED){$('loginMsg').textContent='Primero configura Supabase siguiendo LEEME.';return} $('loginMsg').textContent='Entrando…';const {error}=await supabase.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){$('loginMsg').textContent='No se ha podido entrar. Comprueba el correo y la contraseña.';return}await startApp()};
 async function startApp(){try{state=null;await loadState();$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');setStatus('Todo sincronizado ♡');clearInterval(refreshTimer);refreshTimer=setInterval(async()=>{if(!state)return;try{const {data,error}=await supabase.from('couple_state').select('data,updated_at').eq('id',1).maybeSingle();if(!error&&data&&data.updated_at&&data.updated_at!==lastUpdated){state=data.data;lastUpdated=data.updated_at;render();setStatus('Actualizado desde el otro móvil ♡')}}catch{}},5000)}catch(err){console.error(err);$('loginMsg').textContent='La conexión está iniciada, pero falta configurar la tabla o los permisos. Revisa LEEME.';await supabase.auth.signOut()}}
 if(CONFIGURED){supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);supabase.auth.getSession().then(({data})=>{if(data.session)startApp()})}
-// Vista previa local, solo para enseñar el diseño sin conectar Supabase.
-state=defaultState(); $('loginView').classList.add('hidden'); $('appView').classList.remove('hidden'); render(); setStatus('Vista previa · aún no sincronizada');
 </script>
 </body>
 </html>
